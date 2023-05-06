@@ -1,35 +1,24 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_check_internet_connection/core/bloc/network_bloc.dart';
 
-class NetworkController extends GetxController {
-  final Connectivity _connectivity = Connectivity();
-
-  @override
-  void onInit() {
-    super.onInit();
-    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+class CheckConnection {
+  static final Connectivity connectivity = Connectivity();
+  static void init() async {
+    var connectivityResult = await connectivity.checkConnectivity();
+    bool isConnected = connectivityResult != ConnectivityResult.none;
+    setDataToBloc(isConnected);
+    updateConnectionStatus();
   }
 
-  void _updateConnectionStatus(ConnectivityResult connectivityResult) {
-    if (connectivityResult == ConnectivityResult.none) {
-      Get.rawSnackbar(
-          messageText: const Text('PLEASE CONNECT TO THE INTERNET',
-              style: TextStyle(color: Colors.white, fontSize: 14)),
-          isDismissible: false,
-          duration: const Duration(days: 1),
-          backgroundColor: Colors.red[400]!,
-          icon: const Icon(
-            Icons.wifi_off,
-            color: Colors.white,
-            size: 35,
-          ),
-          margin: EdgeInsets.zero,
-          snackStyle: SnackStyle.GROUNDED);
-    } else {
-      if (Get.isSnackbarOpen) {
-        Get.closeCurrentSnackbar();
-      }
-    }
+  static void updateConnectionStatus() {
+    connectivity.onConnectivityChanged
+        .listen((ConnectivityResult connectivityResult) {
+      bool isConnected = connectivityResult != ConnectivityResult.none;
+      setDataToBloc(isConnected);
+    });
+  }
+
+  static void setDataToBloc(bool isConnected) {
+    NetworkBloc().add(NetworkNotify(isConnected: isConnected));
   }
 }

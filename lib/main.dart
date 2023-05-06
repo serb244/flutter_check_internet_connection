@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/injection/dependency_injection.dart';
+import 'core/bloc/network_bloc.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
-  DependencyInjection.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -14,9 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    return const GetMaterialApp(
-        debugShowCheckedModeBanner: false, home: Page1());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: BlocProvider(
+          create: (context) => NetworkBloc()..add(NetworkObserve()),
+          child: const Page1(),
+        ));
   }
 }
 
@@ -28,7 +29,12 @@ class Page1 extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff1D1E22),
-        title: const Text('FLUTTER GUYS'),
+        title: BlocBuilder<NetworkBloc, NetworkState>(
+          builder: (context, state) {
+            return Text(
+                state.isConnected ? 'FLUTTER GUYS' : 'CHECK YOUR CONNECTION');
+          },
+        ),
         centerTitle: true,
       ),
       body: Center(
