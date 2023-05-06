@@ -29,10 +29,12 @@ class Page1 extends StatelessWidget {
     return BlocListener<NetworkBloc, NetworkState>(
       listener: (context, state) {
         if (!state.isConnected) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 50),
-            content: Text('No internet connection'),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 50),
+              content: Text('No internet connection'),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         }
@@ -49,30 +51,20 @@ class Page1 extends StatelessWidget {
           centerTitle: true,
         ),
         body: Center(
-          child: Column(
-            children: [
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Show SnackBar'),
-                ),
-              ),
-              MaterialButton(
-                  height: 60,
-                  minWidth: 200,
-                  color: const Color(0xff1D1E22),
-                  onPressed: () => Navigator.push<void>(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const Page2(),
-                        ),
-                      ),
-                  child: const Text(
-                    'GO TO PAGE 2',
-                    style: TextStyle(color: Colors.white),
-                  )),
-            ],
-          ),
+          child: MaterialButton(
+              height: 60,
+              minWidth: 200,
+              color: const Color(0xff1D1E22),
+              onPressed: () => Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => const Page2(),
+                    ),
+                  ),
+              child: const Text(
+                'GO TO PAGE 2',
+                style: TextStyle(color: Colors.white),
+              )),
         ),
       ),
     );
