@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: BlocProvider(
-          create: (context) => NetworkBloc()..add(NetworkObserve()),
-          child: const Page1(),
+    return BlocProvider(
+        create: (context) => NetworkBloc()..add(NetworkObserve()),
+        child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Page1(),
         ));
   }
 }
@@ -26,32 +26,54 @@ class Page1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1D1E22),
-        title: BlocBuilder<NetworkBloc, NetworkState>(
-          builder: (context, state) {
-            return Text(
-                state.isConnected ? 'FLUTTER GUYS' : 'CHECK YOUR CONNECTION');
-          },
+    return BlocListener<NetworkBloc, NetworkState>(
+      listener: (context, state) {
+        if (!state.isConnected) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            duration: Duration(seconds: 50),
+            content: Text('No internet connection'),
+          ));
+        } else {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xff1D1E22),
+          title: BlocBuilder<NetworkBloc, NetworkState>(
+            builder: (context, state) {
+              return Text(
+                  state.isConnected ? 'FLUTTER GUYS' : 'CHECK YOUR CONNECTION');
+            },
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: MaterialButton(
-            height: 60,
-            minWidth: 200,
-            color: const Color(0xff1D1E22),
-            onPressed: () => Navigator.push<void>(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const Page2(),
-                  ),
+        body: Center(
+          child: Column(
+            children: [
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Show SnackBar'),
                 ),
-            child: const Text(
-              'GO TO PAGE 2',
-              style: TextStyle(color: Colors.white),
-            )),
+              ),
+              MaterialButton(
+                  height: 60,
+                  minWidth: 200,
+                  color: const Color(0xff1D1E22),
+                  onPressed: () => Navigator.push<void>(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => const Page2(),
+                        ),
+                      ),
+                  child: const Text(
+                    'GO TO PAGE 2',
+                    style: TextStyle(color: Colors.white),
+                  )),
+            ],
+          ),
+        ),
       ),
     );
   }

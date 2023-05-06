@@ -6,7 +6,7 @@ abstract class NetworkEvent {}
 class NetworkNotify extends NetworkEvent {
   final bool isConnected;
 
-  NetworkNotify({this.isConnected = false});
+  NetworkNotify({required this.isConnected});
 }
 
 class NetworkObserve extends NetworkEvent {}
